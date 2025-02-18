@@ -431,8 +431,8 @@ body {
    
 }
 
-@media (min-width:1440px) {
+@media (min-width:1200px) {
     .playbar{
-        bottom: 35px;
+        bottom: 50px;
     }
 }
