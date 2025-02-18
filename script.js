@@ -19,14 +19,20 @@ function secondsToMinutesSeconds(seconds) {
 
 async function getSongs(folder) {
     currFolder = folder;
+    console.log(`Fetching songs from: /${folder}/`);
     let a = await fetch(`/${folder}/`)
+    if (!a.ok) {
+        console.error(`Failed to fetch songs: ${a.status} ${a.statusText}`);
+        return;
+    }
     let response = await a.text();
+    console.log("Response:", response);
     // console.log(response);
     let div = document.createElement("div")
     div.innerHTML = response;
     let as = div.getElementsByTagName("a")
 
-    let songs = []
+    songs = []
     for (let index = 0; index < as.length; index++) {
         const element = as[index];
         if (element.href.endsWith(".mp3")) {
@@ -43,7 +49,7 @@ async function getSongs(folder) {
                              <div class="info">
                                  <div >${song.replaceAll("%20", " ")}</div>
                                 
-                                 <div >Artist</div>
+                                 <div>Artist</div>
                              
                              </div>
                              <div class="playNow"><span> Play Now</span>
@@ -74,6 +80,7 @@ const playMusic = (track, pause = false) => {
     document.querySelector(".songTime").innerHTML = "00:00/00:00"
     document.querySelector(".songInfo").innerHTML = decodeURI(track)
 }
+
 
 async function displayAlbums(){
     let a = await fetch(`/songs/`)
@@ -114,7 +121,7 @@ async function displayAlbums(){
 async function main() {
     // display songs in the library
    
-    let songs = await getSongs("songs/arijit")
+    let songs = await getSongs(`songs/arijit`)
     playMusic(songs[0], true)
 
     // To display files of cards
