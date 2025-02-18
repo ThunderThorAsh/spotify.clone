@@ -19,11 +19,13 @@ function secondsToMinutesSeconds(seconds) {
 
 async function getSongs(folder) {
     currFolder = folder;
+
     console.log(`Fetching songs from: /${folder}`);
+    try{
     let a = await fetch(`/${folder}/song.json`)
     if (!a.ok) {
-        console.error(`Failed to fetch songs: ${a.status} ${a.statusText}`);
-        return;
+        throw new Error(`Failed to fetch songs: ${a.status} ${a.statusText}`);
+        
     }
     let response = await a.json();
     console.log("Response:", response);
@@ -67,8 +69,15 @@ async function getSongs(folder) {
     }
     )
     return response.songs;
-
 }
+    catch (error) {
+        console.error("Error fetching songs:", error);
+        // Display an error message to the user
+        document.querySelector(".songList").innerHTML = "<p>Failed to load songs. Please try again later.</p>";
+        return [];
+    }
+}
+
 const playMusic = (track, pause = false) => {
 
     currentSong.src = `/${currFolder}/` + track
@@ -83,45 +92,72 @@ const playMusic = (track, pause = false) => {
 
 
 async function displayAlbums(){
-    let a = await fetch(`/songs/`)
-    let response = await a.text();
+   try{
+    let a = await fetch(`/songs/albums.json`)
+    if (!a.ok) {
+        throw new Error(`Failed to fetch albums: ${a.status} ${a.statusText}`);
+    }
+    // point to note here
+    let response = await a.json();
     let div = document.createElement("div")
     div.innerHTML = response;
     let anchors = div.getElementsByTagName("a")
     let cardContainer = document.querySelector(".cardContainer")
-    let array = Array.from(anchors)
-    for (let index = 0; index < array.length; index++) {
-        const e = array[index]; 
-        if (e.href.includes("/songs") && !e.href.includes(".htaccess")) {
-            let folder = e.href.split("/").slice(-2)[0]
-            // Get the metadata of the folder
-             a = await fetch(`/songs/${folder}/info.json`)
-            let response = await a.json(); 
-            cardContainer.innerHTML = cardContainer.innerHTML + `<div data-folder="${folder}" class="card ">
-                        <div class="playbtn">
-                            <div class="play"></div>
-                        </div>
-                        <img src="/songs/${folder}/cover.jpg" alt="cover">
-                        <h2>${response.title}</h2>
-                        <h3>${response.description}</h3>
-                    </div>`
-        }
+    // let array = Array.from(anchors)
+    // for (let index = 0; index < array.length; index++) {
+    //     const e = array[index]; 
+    //     if (e.href.includes("/songs") && !e.href.includes(".htaccess")) {
+    //         let folder = e.href.split("/").slice(-2)[0]
+    //         // Get the metadata of the folder
+    //          a = await fetch(`/songs/${folder}/info.json`)
+    //         let response = await a.json(); 
+    //         cardContainer.innerHTML = cardContainer.innerHTML + `<div data-folder="${folder}" class="card ">
+    //                     <div class="playbtn">
+    //                         <div class="play"></div>
+    //                     </div>
+    //                     <img src="/songs/${folder}/cover.jpg" alt="cover">
+    //                     <h2>${response.title}</h2>
+    //                     <h3>${response.description}</h3>
+    //                 </div>`
+    //     }
+    // }
+    cardContainer.innerHTML = "";
+
+    for (const album of response.albums) {
+        cardContainer.innerHTML += `
+            <div data-folder="${album.folder}" class="card">
+                <div class="playbtn">
+                    <div class="play"></div>
+                </div>
+                <img src="/songs/${album.folder}/cover.jpg" alt="cover">
+                <h2>${album.title}</h2>
+                <h3>${album.description}</h3>
+            </div>`;
     }
+
+
+
     // load data whenever the card is clicked
     Array.from(document.getElementsByClassName("card")).forEach(e => {
-        e.addEventListener("click", async item => {
-            songs = await getSongs(`songs/${item.currentTarget.dataset.folder}`)
+        e.addEventListener("click", async () => {
+            songs = await getSongs(`songs/${e.dataset.folder}`)
             console.log(e);
             playMusic(songs[0])
         })
 
     })
 }
+catch (error) {
+    console.error("Error fetching albums:", error);
+    // Display an error message to the user
+    document.querySelector(".cardContainer").innerHTML = "<p>Failed to load albums. Please try again later.</p>";
+}
+}
 
 async function main() {
     // display songs in the library
    
-    let songs = await getSongs(`songs/arijit`)
+    let songs = await getSongs(`songs/atif`)
     playMusic(songs[0], true)
 
     // To display files of cards
