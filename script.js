@@ -19,13 +19,13 @@ function secondsToMinutesSeconds(seconds) {
 
 async function getSongs(folder) {
     currFolder = folder;
-    console.log(`Fetching songs from: /${folder}/`);
-    let a = await fetch(`/${folder}/`)
+    console.log(`Fetching songs from: /${folder}`);
+    let a = await fetch(`/${folder}/song.json`)
     if (!a.ok) {
         console.error(`Failed to fetch songs: ${a.status} ${a.statusText}`);
         return;
     }
-    let response = await a.text();
+    let response = await a.json();
     console.log("Response:", response);
     // console.log(response);
     let div = document.createElement("div")
@@ -66,7 +66,7 @@ async function getSongs(folder) {
         })
     }
     )
-    return songs
+    return response.songs;
 
 }
 const playMusic = (track, pause = false) => {
