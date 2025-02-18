@@ -430,3 +430,9 @@ body {
     }
    
 }
+
+@media (min-width:1440px) {
+    .playbar{
+        bottom: 35px;
+    }
+}
