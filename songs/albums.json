@@ -1,0 +1,14 @@
+{
+    "albums": [
+        {
+            "folder": "arijit",
+            "title": "Love Arijit",
+            "description": "Arijit Singh"
+        },
+        {
+            "folder": "atif",
+            "title": "Atif Hook-up",
+            "description": "Atif Aslam"
+        }
+    ]
+}
