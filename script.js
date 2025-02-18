@@ -1,6 +1,6 @@
 console.log('Now Js starts');
 let currentSong = new Audio();
-let songs;
+let songs= [];
 let currFolder;
 function secondsToMinutesSeconds(seconds) {
     if (isNaN(seconds) || seconds < 0) {
@@ -34,16 +34,32 @@ async function getSongs(folder) {
     div.innerHTML = response;
     let as = div.getElementsByTagName("a")
 
-    songs = []
+    
     for (let index = 0; index < as.length; index++) {
         const element = as[index];
         if (element.href.endsWith(".mp3")) {
             songs.push(element.href.split(`/${folder}/`)[1])
         }
     }
-
+    if (folder === "songs/arijit") {
+        songs = [
+           "Khamoshiyan.mp3",
+        "Phir Bhi Tumko Chaahunga.mp3",
+        "Tum Hi Ho.mp3"
+        ];
+    } else if (folder === "songs/atif") {
+        songs = [
+            "Aadat.mp3",
+        "Chale To Kat Hi Jayega.mp3"
+        ];
+    }
+   
     // Show all the songs in the playlist
-    let songUL = document.querySelector(".songList").getElementsByTagName("ul")[0]
+    let songUL = document.querySelector(".songList ul")
+    if (!songUL) {
+        console.error("Could not find .songList ul element in the DOM.");
+        return;
+    }
     songUL.innerHTML = ""
     for (const song of songs) {
         songUL.innerHTML = songUL.innerHTML + ` <li>
@@ -62,25 +78,31 @@ async function getSongs(folder) {
 
     // To play a song by clicking
 
-    Array.from(document.querySelector(".songList").getElementsByTagName("li")).forEach(e => {
-        e.addEventListener("click", element => {
-            playMusic(e.querySelector(".info").firstElementChild.innerHTML.trim())
+    Array.from(document.querySelector(".songList ul li")).forEach(e => {
+        e.addEventListener("click", () => {
+            let songName = e.querySelector(".info").firstElementChild.innerHTML.trim();
+            console.log("Song clicked:", songName);
+            playMusic(songName);
         })
     }
     )
+    console.log("Songs rendered in library:", songs);
     return response.songs;
 }
     catch (error) {
         console.error("Error fetching songs:", error);
         // Display an error message to the user
-        document.querySelector(".songList").innerHTML = "<p>Failed to load songs. Please try again later.</p>";
+        let songUL = document.querySelector(".songList ul");
+        if (songUL) {
+            songUL.innerHTML = "<p>Failed to load songs. Please try again later.</p>";
+        }
         return [];
     }
 }
 
 const playMusic = (track, pause = false) => {
-
-    currentSong.src = `/${currFolder}/` + track
+    console.log("Playing song:", track);
+    currentSong.src = `/${currFolder}/` +  encodeURIComponent(track);
     if (!pause) {
         currentSong.play();
         play.src = "img/pause.svg"
@@ -99,9 +121,9 @@ async function displayAlbums(){
     }
     // point to note here
     let response = await a.json();
-    let div = document.createElement("div")
-    div.innerHTML = response;
-    let anchors = div.getElementsByTagName("a")
+    // let div = document.createElement("div")
+    // div.innerHTML = response;
+    // let anchors = div.getElementsByTagName("a")
     let cardContainer = document.querySelector(".cardContainer")
     // let array = Array.from(anchors)
     // for (let index = 0; index < array.length; index++) {
@@ -140,7 +162,9 @@ async function displayAlbums(){
     // load data whenever the card is clicked
     Array.from(document.getElementsByClassName("card")).forEach(e => {
         e.addEventListener("click", async () => {
-            songs = await getSongs(`songs/${e.dataset.folder}`)
+            let folder = e.dataset.folder;
+            console.log("Card clicked. Fetching songs for folder:", folder);
+            songs = await getSongs(`songs/${folder}`)
             console.log(e);
             playMusic(songs[0])
         })
@@ -156,14 +180,16 @@ catch (error) {
 
 async function main() {
     // display songs in the library
-   
-    let songs = await getSongs(`songs/atif`)
+    console.log("Initializing library...");
+    let songs = await getSongs("songs/atif")
+    console.log("Songs loaded:", songs);
     playMusic(songs[0], true)
 
+    console.log("Loading albums...");
     // To display files of cards
     await displayAlbums()
-
-
+    
+    console.log("Setting up event listeners...");
     // To play a song by clicking prev,play and next
     // Play button
     play.addEventListener("click", () => {
@@ -178,22 +204,44 @@ async function main() {
     })
 
     // Prev Button
+    // prev.addEventListener("click", () => {
+    //     currentSong.pause;
+    //     let index = songs.indexOf(currentSong.src.split("/").slice(-1)[0])
+    //     if ((index - 1) >= 0) {
+    //         playMusic(songs[index - 1])
+    //     }
+    // })
     prev.addEventListener("click", () => {
-        currentSong.pause;
-        let index = songs.indexOf(currentSong.src.split("/").slice(-1)[0])
-        if ((index - 1) >= 0) {
-            playMusic(songs[index - 1])
+        currentSong.pause();
+        let currentSongName = currentSong.src.split("/").slice(-1)[0]; // Get the current song name
+        let index = songs.indexOf(currentSongName); // Find the index of the current song
+        if (index - 1 >= 0) {
+            playMusic(songs[index - 1]); // Play the previous song
+        } else {
+            playMusic(songs[songs.length - 1]); // Loop back to the last song
         }
-    })
+    });
 
     // Next Button
+    // next.addEventListener("click", () => {
+    //     currentSong.pause;
+    //     let index = songs.indexOf(currentSong.src.split("/").slice(-1)[0])
+    //     if ((index + 1) < songs.length) {
+    //         playMusic(songs[index + 1])
+    //     }
+    // })
     next.addEventListener("click", () => {
-        currentSong.pause;
-        let index = songs.indexOf(currentSong.src.split("/").slice(-1)[0])
-        if ((index + 1) < songs.length) {
-            playMusic(songs[index + 1])
+        currentSong.pause();
+        let currentSongName = currentSong.src.split("/").slice(-1)[0]; // Get the current song name
+        let index = songs.indexOf(currentSongName); // Find the index of the current song
+        if (index + 1 < songs.length) {
+            playMusic(songs[index + 1]); // Play the next song
+        } else {
+            playMusic(songs[0]); // Loop back to the first song
         }
-    })
+    });
+
+
 
     // Listen for timeupdate event
     currentSong.addEventListener("timeupdate", () => {
