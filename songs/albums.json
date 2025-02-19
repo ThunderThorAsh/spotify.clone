@@ -1,6 +1,11 @@
 {
     "albums": [
         {
+            "folder": "90s",
+            "title":"90s",
+            "description":"Alka ji, Kumar Sanu, Udit JI"
+        },
+        {
             "folder": "arijit",
             "title": "Love Arijit",
             "description": "Arijit Singh"
@@ -9,6 +14,12 @@
             "folder": "atif",
             "title": "Atif Hook-up",
             "description": "Atif Aslam"
+        },
+        {
+            "folder": "bw",
+            "title": "Bollywood",
+            "description": "Sonu, Mushtafa, Mohit, Ankit"
         }
+        
     ]
 }

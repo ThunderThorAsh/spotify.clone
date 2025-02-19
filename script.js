@@ -43,9 +43,9 @@ async function getSongs(folder) {
         }
         if (folder === "songs/arijit") {
             songs = [
+                "Tum Hi Ho.mp3",
+                "Phir Bhi Tumko Chaahunga.mp3"
 
-                "Phir Bhi Tumko Chaahunga.mp3",
-                "Tum Hi Ho.mp3"
             ];
         } else if (folder === "songs/atif") {
             songs = [
@@ -62,16 +62,11 @@ async function getSongs(folder) {
         }
         else if (folder === "songs/90s") {
             songs = [
-                "Ek Mulaqat Zaroori Hai Sanam.mp3",
                 "Tu Meri Zindagi Hai.mp3"
             ]
         }
-        else if (folder === "songs/kk") {
-            songs = [
-                "Dil Ibaadat Kar Raha Hai.mp3",
-
-            ]
-        }   
+       
+        
         // Show all the songs in the playlist
         let songUL = document.querySelector(".songList ul")
         if (!songUL) {
