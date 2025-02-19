@@ -1,4 +1,4 @@
-console.log('Now Js starts');
+
 let currentSong = new Audio();
 let songs = [];
 let currFolder;
@@ -20,7 +20,7 @@ function secondsToMinutesSeconds(seconds) {
 async function getSongs(folder) {
     currFolder = folder;
 
-    console.log(`Fetching songs from: /${folder}`);
+   
     try {
         let a = await fetch(`/${folder}/song.json`)
         if (!a.ok) {
@@ -28,8 +28,7 @@ async function getSongs(folder) {
 
         }
         let response = await a.json();
-        console.log("Response:", response);
-        // console.log(response);
+      
         let div = document.createElement("div")
         div.innerHTML = response;
         let as = div.getElementsByTagName("a")
@@ -97,7 +96,6 @@ async function getSongs(folder) {
             })
         }
         )
-        console.log("Songs rendered in library:", songs);
         return response.songs;
     }
     catch (error) {
@@ -112,7 +110,7 @@ async function getSongs(folder) {
 }
 
 const playMusic = (track, pause = false) => {
-    console.log("Playing song:", track);
+   
     currentSong.src = `/${currFolder}/` + track;
     if (!pause) {
         currentSong.play();
@@ -174,9 +172,7 @@ async function displayAlbums() {
         Array.from(document.getElementsByClassName("card")).forEach(e => {
             e.addEventListener("click", async () => {
                 let folder = e.dataset.folder;
-                console.log("Card clicked. Fetching songs for folder:", folder);
                 songs = await getSongs(`songs/${folder}`)
-                console.log(e);
                 playMusic(songs[0])
             })
 
@@ -191,16 +187,12 @@ async function displayAlbums() {
 
 async function main() {
     // display songs in the library
-    console.log("Initializing library...");
     let songs = await getSongs("songs/90s")
-    console.log("Songs loaded:", songs);
     playMusic(songs[0], true)
 
-    console.log("Loading albums...");
     // To display files of cards
     await displayAlbums()
 
-    console.log("Setting up event listeners...");
     // To play a song by clicking prev,play and next
     // Play button
     play.addEventListener("click", () => {
