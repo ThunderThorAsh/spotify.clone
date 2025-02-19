@@ -207,7 +207,7 @@ body {
     position: relative;
     border-radius: 5px;
     background-color: #252525;
-    transition: all .8s;
+    transition: all .9s;
 }
 
 .card:hover {
@@ -382,7 +382,7 @@ body {
     .playbar {
         width: calc(100vw - 75px);
         font-size: 15px;
-        height: auto;
+        height: 18vh;
     }
 
     .belowbar {
@@ -428,11 +428,39 @@ body {
     .card{
         width: auto;
     }
+    .playbar{
+        height: 22vh;
+    }
+   
+}
+@media (max-width:1024px) and (orientation:landscape) {
+    .card{
+        width: auto;
+    }
+   
+    .playbar{
+        height: 20vh;
+
+    }
+    .belowbar{
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .volume{
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+    }
    
 }
 
 @media (min-width:1200px) {
     .playbar{
-        bottom: 50px;
+        bottom: 55px;
     }
 }
