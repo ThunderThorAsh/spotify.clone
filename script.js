@@ -1,3 +1,5 @@
+console.log('Would you love to have a Chat with me😊');
+console.log('Meet me at ashishgupta812005@gmail.com');
 
 let currentSong = new Audio();
 let songs = [];
